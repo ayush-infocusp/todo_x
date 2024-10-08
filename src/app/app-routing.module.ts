@@ -1,12 +1,26 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { OnboardingModule } from './features/onboarding/onboarding.module';
+import { AuthGuard } from './core/guards/auth-guard/auth.guard';
 
 const routes: Routes = [
   {
+    path : 'app',
+    canActivate: [AuthGuard],
+    loadChildren : () => import('../app/features/client/client.module').then(m => m.ClientModule),
+    
+  },
+  {
+    path : 'admin',
+    canActivate: [AuthGuard],
+    loadChildren : () => import('../app/features/admin/admin.module').then(m => m.AdminModule),
+    
+  },
+  {
     path : '',
-    loadChildren : () => import('../app/features/onboarding/onboarding.module').then(m => m.OnboardingModule)
-  }
+    canActivate: [AuthGuard],
+    loadChildren : () => import('../app/features/onboarding/onboarding.module').then(m => m.OnboardingModule),
+    
+  },
 ];
 
 @NgModule({
