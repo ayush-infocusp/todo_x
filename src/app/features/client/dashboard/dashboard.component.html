@@ -1,15 +1,23 @@
 <div class="container">
-    <div class="my-2 d-flex">
-        <div *ngFor="let item of filters" class="">
-            <span class="btn btn-dark">{{item}}</span>
+    <div class="my-2 d-flex btn-group btn-group-toggle">
+        <div *ngFor="let item of filters">
+            <span class="btn mx-1 btn-secondary" (click)="updateFilters(item)" 
+            [ngClass]="selectedFilter == item ? 'active' : ''">{{item | titlecase}}</span>
         </div>
     </div>
     <div class="my-2">
-        List
+
+        <div *ngFor="let listItem of listingData;let i=index" class="border border-1 rounded-2 p-2 my-2">
+            <span class="me-2">
+                <input type="checkbox" [checked]="listItem.status == this.statusConst.PENDING" (click)="updateTodoStatus(i)">
+            </span>
+            <span class="">{{listItem.data}}</span>
+            
+        </div>
     </div>
-    <div class="form-control border my-2 mx-5">
-        <input type="text" class="border-0 me-2">
-        <button class="btn btn radius-5 border">
+    <div class="form-control border-2 my-2 d-flex">
+        <input type="text" class="form-control border-0 me-2 w-100" [placeholder]="'Enter your task'" [(ngModel)]="newTodoItem.data">
+        <button class="btn btn-dark radius-5 border" (click)="addTodo()">
             Add
         </button>
     </div>
