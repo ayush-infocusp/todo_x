@@ -15,8 +15,14 @@ export class AppInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     
-    const baseRequest = request.clone({ url : environment.BASE_URL+request.url});
-    baseRequest.headers.append('auth' , 'Bearer '+localStorage.getItem('authToken'))
+    const baseRequest = request.clone({ 
+      url : environment.BASE_URL+request.url,
+      setHeaders : {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': `Bearer ${environment.AUTH_TOKEN}`,
+        'userCode' : '001'
+      }
+    });
     console.log(baseRequest.url);
     
     return next.handle(baseRequest);

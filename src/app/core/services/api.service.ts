@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { apiResponse, todoItems } from '../models/app.model';
 import { Observable } from 'rxjs';
+import { API_URLS } from '../constants/api.constant';
 
 
 @Injectable({
@@ -21,11 +22,11 @@ export class ApiService {
    * @returns 
    */
   public getTodoListingData(selectedFilter: string, pageNo: number = 1, pageSize: number = 10): Observable<apiResponse<todoItems[]>> {
-    return this.http.get<apiResponse<todoItems[]>>('app/getTodos/', {
+    return this.http.get<apiResponse<todoItems[]>>(API_URLS.GET_TODOS, {
       params: {
-        status: selectedFilter,
         pageNo: pageNo,
-        pageSize: pageSize
+        pageSize: pageSize,
+        status: selectedFilter,
       }
     });
   }
@@ -36,7 +37,7 @@ export class ApiService {
    * @returns 
    */
   public setTodosData(todo: todoItems): Observable<apiResponse<todoItems>> {
-    return this.http.post<apiResponse<todoItems>>('app/setTodos', {
+    return this.http.post<apiResponse<todoItems>>(API_URLS.SET_TODOS, {
       body: todo
     })
   }
@@ -47,7 +48,7 @@ export class ApiService {
    * @returns 
    */
   public updateTodosData(todo: todoItems): Observable<apiResponse<todoItems>> {
-    return this.http.patch<apiResponse<todoItems>>('app/updateTodos', {
+    return this.http.patch<apiResponse<todoItems>>(API_URLS.UPDATE_TODOS, {
       body: todo
     })
   }
@@ -58,6 +59,6 @@ export class ApiService {
    * @returns 
    */
   public deleteTodosData(todoItemIndex: number): Observable<apiResponse<todoItems>> {
-    return this.http.delete<apiResponse<todoItems>>('api/deleteTodos/' + todoItemIndex);
+    return this.http.delete<apiResponse<todoItems>>(API_URLS.DELETE_TODOS + '/' + todoItemIndex);
   }
 }
