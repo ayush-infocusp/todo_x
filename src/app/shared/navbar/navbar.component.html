@@ -5,9 +5,12 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li *ngIf="isLoggedInUser" class="nav-item cursor-pointer">
-            <a class="nav-link active" aria-current="page" (click)="redirectUser('/app/dashboard')">Home</a>
+        <ul *ngIf="isLoggedInUser" class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item cursor-pointer">
+            <a class="nav-link active" aria-current="page" role="button" (click)="redirectUser('/app/dashboard')">Home</a>
+          </li>
+          <li class="nav-item cursor-pointer">
+            <a class="nav-link active" aria-current="page"  role="button" (click)="logoutUser()">Logout</a>
           </li>
         </ul>
         <ul *ngIf="!isLoggedInUser" class="navbar-nav ms-auto mb-2 mb-lg-0">

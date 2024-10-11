@@ -8,9 +8,12 @@
     <div class="my-2">
         <div *ngFor="let listItem of listingData;let i=index" class=" d-flex border border-1 rounded-2 p-2 my-2">
             <span class="me-2">
-                <input type="checkbox" [checked]="listItem.status == this.statusConst.PENDING" (click)="updateTodoStatus(listItem,i)">
+                <input type="checkbox" [checked]="listItem.status != this.statusConst.PENDING" (click)="updateTodoStatus(listItem,i)">
             </span>
-            <span class="">{{listItem.task}}</span>
+            <span class="">
+                <ng-container *ngIf="listItem.status != this.statusConst.PENDING" ><s>{{listItem.task}}</s></ng-container>
+                <ng-container *ngIf="listItem.status == this.statusConst.PENDING" >{{listItem.task}}</ng-container>
+            </span>
             <span class="me-0 ms-auto"><button type="button" class="btn-close" aria-label="Close" (click)="deleteTodo(listItem)"></button></span>
         </div>
     </div>

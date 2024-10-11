@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { LOCAL_STORAGE } from 'src/app/core/constants/app.constant';
 
 @Component({
   selector: 'app-navbar',
@@ -36,6 +37,15 @@ export class NavbarComponent implements OnInit {
    */
   public redirectUser(route: string) {
     this.router.navigate([route]);
+  }
+
+  /**
+   * 
+   */
+  public logoutUser(): void {
+    localStorage.removeItem(LOCAL_STORAGE.AUTH_TOKEN);
+    localStorage.removeItem(LOCAL_STORAGE.USER_INFO);
+    this.router.navigate(['/login']);
   }
 
 }

@@ -42,18 +42,7 @@ export class DashboardComponent implements OnInit {
   /**
    * listing data for all the todo items
    */
-  public listingData: todoItems[] = [
-    {
-      task: 'Lorem ipsum dolor sit',
-      status: this.statusConst.COMPLETED
-    }, {
-      task: 'amet consectetur adipisicing elit.',
-      status: this.statusConst.PENDING
-    }, {
-      task: 'Illo sapiente veritatis rem doloremque possimus id',
-      status: this.statusConst.COMPLETED
-    }
-  ]
+  public listingData: todoItems[] = []
 
   /**
    * todo Item to be added 
@@ -98,6 +87,11 @@ export class DashboardComponent implements OnInit {
    * @param index 
    */
   public updateTodoStatus(todo: todoItems, index: number): void {
+    if(todo.status == this.statusConst.PENDING){
+      todo.status = this.statusConst.COMPLETED
+    }else{
+      todo.status = this.statusConst.PENDING
+    }
     this.apiService.updateTodosData(todo).subscribe(data => {
       if (data) {
         this.listingData[index] = data.dt;
@@ -111,9 +105,12 @@ export class DashboardComponent implements OnInit {
    */
   public updateFilters(updatedFilter: string): void {
     this.selectedFilter = updatedFilter;
-    this.fetchTodoData(this.selectedFilter);
+    this.fetchTodoData(this.selectedFilter == FILTERS.ALL ?  '' : this.selectedFilter);
   }
 
+  /**
+   * delete the todo item
+   */
   public deleteTodo(todo: todoItems): void {
     this.apiService.deleteTodosData(todo.id as number).subscribe(data => {
       if (data)

@@ -7,6 +7,7 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { LOCAL_STORAGE } from '../constants/app.constant';
 
 @Injectable()
 export class AppInterceptor implements HttpInterceptor {
@@ -19,7 +20,7 @@ export class AppInterceptor implements HttpInterceptor {
       url : environment.BASE_URL+request.url,
       setHeaders : {
         'Content-Type': 'application/json; charset=utf-8',
-        'Authorization': `Bearer ${environment.AUTH_TOKEN}`,
+        'Authorization': `Bearer ${localStorage.getItem(LOCAL_STORAGE.AUTH_TOKEN)}`,
         'userCode' : '001'
       }
     });

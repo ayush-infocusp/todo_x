@@ -37,9 +37,7 @@ export class ApiService {
    * @returns 
    */
   public setTodosData(todo: todoItems): Observable<apiResponse<todoItems>> {
-    return this.http.post<apiResponse<todoItems>>(API_URLS.SET_TODOS, {
-      body: todo
-    })
+    return this.http.post<apiResponse<todoItems>>(API_URLS.SET_TODOS, todo)
   }
 
   /**
@@ -48,9 +46,7 @@ export class ApiService {
    * @returns 
    */
   public updateTodosData(todo: todoItems): Observable<apiResponse<todoItems>> {
-    return this.http.patch<apiResponse<todoItems>>(API_URLS.UPDATE_TODOS, {
-      body: todo
-    })
+    return this.http.patch<apiResponse<todoItems>>(API_URLS.UPDATE_TODOS, todo)
   }
 
   /**
