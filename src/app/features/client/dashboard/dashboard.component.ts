@@ -11,6 +11,7 @@ import { FILTER_ARRAY, FILTERS, STATUS } from 'src/app/core/constants/app.consta
  */
 import { todoItems } from 'src/app/core/models/app.model';
 import { ApiService } from 'src/app/core/services/api.service';
+import { HelperService } from 'src/app/core/services/helper.service';
 
 /**
  * dashboard acts as the first interface to the client 
@@ -51,6 +52,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private helper: HelperService,
   ) { }
 
   ngOnInit(): void {
@@ -76,6 +78,7 @@ export class DashboardComponent implements OnInit {
       this.apiService.setTodosData(this.newTodoItem).subscribe(data => {
         if (data) {
           this.listingData.push(data.dt);
+          this.helper.showNudge(data.m);
         }
       })
       this.newTodoItem = { task: '', status: this.statusConst.PENDING };
@@ -95,6 +98,7 @@ export class DashboardComponent implements OnInit {
     this.apiService.updateTodosData(todo).subscribe(data => {
       if (data) {
         this.listingData[index] = data.dt;
+        this.helper.showNudge(data.m);
       }
     })
   }
@@ -113,10 +117,12 @@ export class DashboardComponent implements OnInit {
    */
   public deleteTodo(todo: todoItems): void {
     this.apiService.deleteTodosData(todo.id as number).subscribe(data => {
-      if (data)
+      if (data){
         this.listingData = this.listingData.filter((data) => {
           return data != todo
         })
+        this.helper.showNudge(data.m);
+      }
     })
   }
 
