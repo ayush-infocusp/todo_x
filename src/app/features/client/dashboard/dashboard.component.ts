@@ -44,13 +44,13 @@ export class DashboardComponent implements OnInit {
    */
   public listingData: todoItems[] = [
     {
-      data: 'Lorem ipsum dolor sit',
+      task: 'Lorem ipsum dolor sit',
       status: this.statusConst.COMPLETED
     }, {
-      data: 'amet consectetur adipisicing elit.',
+      task: 'amet consectetur adipisicing elit.',
       status: this.statusConst.PENDING
     }, {
-      data: 'Illo sapiente veritatis rem doloremque possimus id',
+      task: 'Illo sapiente veritatis rem doloremque possimus id',
       status: this.statusConst.COMPLETED
     }
   ]
@@ -58,7 +58,7 @@ export class DashboardComponent implements OnInit {
   /**
    * todo Item to be added 
    */
-  public newTodoItem: todoItems = { data: '', status: this.statusConst.PENDING };
+  public newTodoItem: todoItems = { task: '', status: this.statusConst.PENDING };
 
   constructor(
     private apiService: ApiService,
@@ -82,14 +82,14 @@ export class DashboardComponent implements OnInit {
    * and save to the backend
    */
   public addTodo(): void {
-    if (this.newTodoItem.data != '') {
-      this.newTodoItem.data.trim();
+    if (this.newTodoItem.task != '') {
+      this.newTodoItem.task.trim();
       this.apiService.setTodosData(this.newTodoItem).subscribe(data => {
         if (data) {
           this.listingData.push(data.dt);
         }
       })
-      this.newTodoItem = { data: '', status: this.statusConst.PENDING };
+      this.newTodoItem = { task: '', status: this.statusConst.PENDING };
     }
   }
 

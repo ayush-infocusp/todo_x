@@ -6,6 +6,7 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { OnboardingComponent } from './onboarding.component';
 import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,6 +16,8 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
     OnboardingComponent
   ],
   imports: [
+    FormsModule,
+    ReactiveFormsModule,
     NavbarComponent,
     CommonModule,
     OnboardingRoutingModule

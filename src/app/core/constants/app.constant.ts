@@ -1,5 +1,6 @@
 export const LOCAL_STORAGE = {
-    AUTH_TOKEN: 'authToken'
+    AUTH_TOKEN: 'authToken',
+    USER_INFO : 'userInfo'
 }
 
 export const STATUS = {
