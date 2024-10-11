@@ -7,12 +7,12 @@
     </div>
     <div class="my-2">
 
-        <div *ngFor="let listItem of listingData;let i=index" class="border border-1 rounded-2 p-2 my-2">
+        <div *ngFor="let listItem of listingData;let i=index" class=" d-flex border border-1 rounded-2 p-2 my-2">
             <span class="me-2">
-                <input type="checkbox" [checked]="listItem.status == this.statusConst.PENDING" (click)="updateTodoStatus(i)">
+                <input type="checkbox" [checked]="listItem.status == this.statusConst.PENDING" (click)="updateTodoStatus(listItem,i)">
             </span>
             <span class="">{{listItem.data}}</span>
-            
+            <span class="me-0 ms-auto"><button type="button" class="btn-close" aria-label="Close" (click)="deleteTodo(listItem)"></button></span>
         </div>
     </div>
     <div class="form-control border-2 my-2 d-flex">

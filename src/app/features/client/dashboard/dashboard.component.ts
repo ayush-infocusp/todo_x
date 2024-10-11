@@ -38,11 +38,11 @@ export class DashboardComponent implements OnInit {
    * filter parameters
    */
   public filters = FILTER_ARRAY;
-  
+
   /**
    * listing data for all the todo items
    */
-  public listingData = [
+  public listingData: todoItems[] = [
     {
       data: 'Lorem ipsum dolor sit',
       status: this.statusConst.COMPLETED
@@ -84,7 +84,11 @@ export class DashboardComponent implements OnInit {
   public addTodo(): void {
     if (this.newTodoItem.data != '') {
       this.newTodoItem.data.trim();
-      this.listingData.push(this.newTodoItem)
+      this.apiService.setTodosData(this.newTodoItem).subscribe(data => {
+        if (data) {
+          this.listingData.push(data.dt);
+        }
+      })
       this.newTodoItem = { data: '', status: this.statusConst.PENDING };
     }
   }
@@ -93,8 +97,12 @@ export class DashboardComponent implements OnInit {
    * update the todo status of a specific todo
    * @param index 
    */
-  public updateTodoStatus(index: number): void {
-    this.listingData[index].status = this.statusConst.COMPLETED;
+  public updateTodoStatus(todo: todoItems, index: number): void {
+    this.apiService.updateTodosData(todo).subscribe(data => {
+      if (data) {
+        this.listingData[index] = data.dt;
+      }
+    })
   }
 
   /**
@@ -104,6 +112,15 @@ export class DashboardComponent implements OnInit {
   public updateFilters(updatedFilter: string): void {
     this.selectedFilter = updatedFilter;
     this.fetchTodoData(this.selectedFilter);
+  }
+
+  public deleteTodo(todo: todoItems): void {
+    this.apiService.deleteTodosData(todo.id as number).subscribe(data => {
+      if (data)
+        this.listingData = this.listingData.filter((data) => {
+          return data != todo
+        })
+    })
   }
 
 }
