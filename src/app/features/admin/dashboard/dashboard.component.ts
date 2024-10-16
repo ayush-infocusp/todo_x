@@ -9,7 +9,7 @@ import { FILTER_ARRAY, FILTERS, STATUS } from 'src/app/core/constants/app.consta
 /**
  * model imports
  */
-import { todoItems } from 'src/app/core/models/app.model';
+import { todoItems, userItems } from 'src/app/core/models/app.model';
 import { ApiService } from 'src/app/core/services/api.service';
 import { HelperService } from 'src/app/core/services/helper.service';
 
@@ -43,7 +43,7 @@ export class DashboardComponent implements OnInit {
   /**
    * listing data for all the todo items
    */
-  public listingData: todoItems[] = []
+  public listingData: userItems[] = []
 
   /**
    * todo Item to be added 
@@ -56,14 +56,14 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.fetchTodoData('');
+    this.fetchUserData('');
   }
 
   /**
    * fetch todo data according to the selected filter
    */
-  public fetchTodoData(selectedFilter: string): void {
-    this.apiService.getTodoListingData(selectedFilter).subscribe(data => {
+  private fetchUserData(selectedFilter: string): void {
+    this.apiService.getUserListingData().subscribe(data => {
       this.listingData = data.data;
     });
   }
@@ -72,18 +72,18 @@ export class DashboardComponent implements OnInit {
    * add todo to the list of Todos 
    * and save to the backend
    */
-  public addTodo(): void {
-    if (this.newTodoItem.task != '') {
-      this.newTodoItem.task.trim();
-      this.apiService.setTodosData(this.newTodoItem).subscribe(data => {
-        if (data) {
-          this.listingData.push(data.data);
-          this.helper.showNudge(data.message);
-        }
-      })
-      this.newTodoItem = { task: '', status: this.statusConst.PENDING };
-    }
-  }
+  // public addTodo(): void {
+  //   if (this.newTodoItem.task != '') {
+  //     this.newTodoItem.task.trim();
+  //     this.apiService.setTodosData(this.newTodoItem).subscribe(data => {
+  //       if (data) {
+  //         this.listingData.push(data.data);
+  //         this.helper.showNudge(data.message);
+  //       }
+  //     })
+  //     this.newTodoItem = { task: '', status: this.statusConst.PENDING };
+  //   }
+  // }
 
   /**
    * update the todo status of a specific todo
@@ -95,7 +95,7 @@ export class DashboardComponent implements OnInit {
     }else{
       todo.status = this.statusConst.PENDING
     }
-    this.apiService.updateTodosData(todo).subscribe(data => {
+    this.apiService.updateUserData(todo).subscribe(data => {
       if (data) {
         this.listingData[index] = data.data;
         this.helper.showNudge(data.message);
@@ -109,13 +109,13 @@ export class DashboardComponent implements OnInit {
    */
   public updateFilters(updatedFilter: string): void {
     this.selectedFilter = updatedFilter;
-    this.fetchTodoData(this.selectedFilter == FILTERS.ALL ?  '' : this.selectedFilter);
+    this.fetchUserData(this.selectedFilter == FILTERS.ALL ?  '' : this.selectedFilter);
   }
 
   /**
    * delete the todo item
    */
-  public deleteTodo(todo: todoItems): void {
+  public deleteTodo(todo: userItems): void {
     this.apiService.deleteTodosData(todo.id as number).subscribe(data => {
       if (data){
         this.listingData = this.listingData.filter((data) => {

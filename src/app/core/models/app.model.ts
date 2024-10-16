@@ -5,10 +5,18 @@ export interface todoItems {
     userId?: string,
 }
 
+
+export interface userItems {
+    email : string,
+    id : number,
+    role : string,
+    username : string
+}
+
 export interface apiResponse<T> {
-    mc: string,
-    m: string,
-    dt: T
+    message_code: string,
+    message: string,
+    data: T
 }
 
 export interface tokenData {
@@ -24,7 +32,8 @@ export interface loginUserDetails {
 export interface userDetails {
     email: string,
     id: number,
-    username: string
+    username: string,
+    role: string
 }
 
 export interface signupResponse {

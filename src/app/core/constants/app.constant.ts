@@ -19,3 +19,8 @@ export const FILTER_ARRAY = [
     FILTERS.PENDING,
     FILTERS.COMPLETED
 ]
+
+export const USER = {
+    ADMIN : "ADMIN",
+    CLEINT : "CLIENT"
+}

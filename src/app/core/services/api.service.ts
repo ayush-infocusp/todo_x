@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { apiResponse, todoItems } from '../models/app.model';
+import { apiResponse, todoItems, userItems } from '../models/app.model';
 import { Observable } from 'rxjs';
 import { API_URLS } from '../constants/api.constant';
 
@@ -21,7 +21,7 @@ export class ApiService {
    * @param {number} pageSize
    * @returns 
    */
-  public getTodoListingData(selectedFilter: string, pageNo: number = 1, pageSize: number = 10): Observable<apiResponse<todoItems[]>> {
+  public getTodoListingData(selectedFilter: string, pageNo: number = 1, pageSize: number = 20): Observable<apiResponse<todoItems[]>> {
     return this.http.get<apiResponse<todoItems[]>>(API_URLS.GET_TODOS, {
       params: {
         pageNo: pageNo,
@@ -56,5 +56,20 @@ export class ApiService {
    */
   public deleteTodosData(todoItemIndex: number): Observable<apiResponse<todoItems>> {
     return this.http.delete<apiResponse<todoItems>>(API_URLS.DELETE_TODOS + '/' + todoItemIndex);
+  }
+
+
+  public getUserListingData(pageNo: number = 1, pageSize: number = 20,deleted : boolean = false): Observable<apiResponse<userItems[]>> {
+    return this.http.get<apiResponse<userItems[]>>(API_URLS.GET_USERS, {
+      params: {
+        pageNo: pageNo,
+        pageSize: pageSize,
+        deleted: deleted,
+      }
+    });
+  }
+
+  public updateUserData(todo: todoItems): Observable<apiResponse<userItems>> {
+    return this.http.patch<apiResponse<userItems>>(API_URLS.UPDATE_TODOS, todo)
   }
 }

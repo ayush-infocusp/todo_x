@@ -25,7 +25,9 @@ export class NavbarComponent implements OnInit {
     private router: Router,
     private authService: AuthService
   ) {
-    this.isLoggedInUser = this.authService.isUserLoggedIn;
+    this.authService.isUserLoggedIn.subscribe(data=>{
+      this.isLoggedInUser = data
+    });
   }
 
   ngOnInit(): void {
@@ -45,6 +47,7 @@ export class NavbarComponent implements OnInit {
   public logoutUser(): void {
     localStorage.removeItem(LOCAL_STORAGE.AUTH_TOKEN);
     localStorage.removeItem(LOCAL_STORAGE.USER_INFO);
+    this.isLoggedInUser=false
     this.router.navigate(['/login']);
   }
 

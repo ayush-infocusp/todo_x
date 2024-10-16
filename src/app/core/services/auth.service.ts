@@ -1,16 +1,17 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { apiResponse, loginUserDetails, signupResponse, tokenData, userDetails } from '../models/app.model';
 import { API_URLS } from '../constants/api.constant';
 import { LOCAL_STORAGE } from '../constants/app.constant';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  public isUserLoggedIn = false;
+  public isUserLoggedIn = new BehaviorSubject(false);
 
   constructor(
     private http: HttpClient
@@ -19,7 +20,7 @@ export class AuthService {
   }
 
   private userLoggedIn() {
-    this.isUserLoggedIn = localStorage.getItem(LOCAL_STORAGE.AUTH_TOKEN) ? true : false;
+    this.isUserLoggedIn.next(localStorage.getItem(LOCAL_STORAGE.AUTH_TOKEN) ? true : false);
   }
 
   /**
@@ -39,5 +40,13 @@ export class AuthService {
   */
   public signUpUser(userDetails: loginUserDetails): Observable<apiResponse<signupResponse>> {
     return this.http.post<apiResponse<signupResponse>>(API_URLS.SIGNUP, userDetails)
+  }
+
+  public getDecodedAccessToken(token: string): any {
+    try {
+      return jwtDecode(token);
+    } catch(Error) {
+      return null;
+    }
   }
 }

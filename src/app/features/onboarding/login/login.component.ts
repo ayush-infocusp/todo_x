@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LOCAL_STORAGE } from 'src/app/core/constants/app.constant';
+import { LOCAL_STORAGE, USER } from 'src/app/core/constants/app.constant';
 import { loginUserDetails } from 'src/app/core/models/app.model';
 import { AuthService } from 'src/app/core/services/auth.service';
 
@@ -33,8 +33,15 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.authService.loginUser(this.loginForm.value as loginUserDetails).subscribe(data => {
         if (data) {
-          localStorage.setItem(LOCAL_STORAGE.AUTH_TOKEN, data.dt.token)
-          this.router.navigate(['/app/dashboard'])
+          const jwtData = this.authService.getDecodedAccessToken(data.data.token);
+          if(jwtData){
+            localStorage.setItem(LOCAL_STORAGE.AUTH_TOKEN, data.data.token)
+            this.authService.isUserLoggedIn.next(true)
+            if(jwtData.role == USER.CLEINT)
+              this.router.navigate(['/app/dashboard'])
+            else
+            this.router.navigate(['/admin/dashboard'])
+          }
         }
       })
     }

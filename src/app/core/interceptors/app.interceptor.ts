@@ -21,7 +21,6 @@ export class AppInterceptor implements HttpInterceptor {
       setHeaders : {
         'Content-Type': 'application/json; charset=utf-8',
         'Authorization': `Bearer ${localStorage.getItem(LOCAL_STORAGE.AUTH_TOKEN)}`,
-        'userCode' : '001'
       }
     });
     console.log(baseRequest.url);
