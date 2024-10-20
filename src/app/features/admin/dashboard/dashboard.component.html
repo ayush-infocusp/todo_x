@@ -2,26 +2,15 @@
     <div class="my-2 d-flex btn-group btn-group-toggle">
         <div *ngFor="let item of filters">
             <span class="btn mx-1 btn-secondary" (click)="updateFilters(item)" 
-            [ngClass]="selectedFilter == item ? 'active' : ''">{{item | titlecase}}</span>
+            [ngClass]="selectedFilter == item ? 'active' : ''">{{item.key| titlecase}}</span>
         </div>
     </div>
     <div class="my-2" style="max-height:80vh;overflow-y:auto">
         <div *ngFor="let listItem of listingData;let i=index" class=" d-flex border border-1 rounded-2 p-2 my-2">
-            <!-- <span class="me-2">
-                <input type="checkbox" [checked]="listItem.status != this.statusConst.PENDING" (click)="updateTodoStatus(listItem,i)">
-            </span> -->
             <span class="">
-                <!-- <ng-container *ngIf="listItem.status != this.statusConst.PENDING" ><s>{{listItem.email}}</s></ng-container> -->
                 <ng-container >{{listItem.email}}</ng-container>
             </span>
-            <span class="me-0 ms-auto"><button type="button" class="btn-close" aria-label="Close" (click)="deleteTodo(listItem)"></button></span>
+            <span *ngIf="selectedFilter.delete ==false" class="me-0 ms-auto"><button type="button" class="btn-close" aria-label="Close" (click)="deleteUser(listItem)"></button></span>
         </div>
     </div>
-    <!-- <div class="form-control border-2 my-2 d-flex">
-        <input type="text" class="form-control border-0 me-2 w-100" [placeholder]="'Enter your task'" [(ngModel)]="newTodoItem.task">
-        <button class="btn btn-dark radius-5 border" (click)="addTodo()">
-            Add
-        </button>
-    </div> -->
-
 </div>

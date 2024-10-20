@@ -72,4 +72,16 @@ export class ApiService {
   public updateUserData(todo: todoItems): Observable<apiResponse<userItems>> {
     return this.http.patch<apiResponse<userItems>>(API_URLS.UPDATE_TODOS, todo)
   }
+
+  public deleteUserData(todoItemIndex: number): Observable<apiResponse<userItems>> {
+    return this.http.delete<apiResponse<userItems>>(API_URLS.DELTE_USER + '/' + todoItemIndex);
+  }
+
+
+  public uploadChuckData(formData : FormData){
+    return this.http.put(API_URLS.UPLOAD_FILE, formData,{
+      reportProgress: true,
+      observe: 'events'
+    }).toPromise()
+  }
 }

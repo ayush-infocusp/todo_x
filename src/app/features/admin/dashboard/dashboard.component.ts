@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 /**
  * constant imports
  */
-import { FILTER_ARRAY, FILTERS, STATUS } from 'src/app/core/constants/app.constant';
+import { FILTER_ARRAY, FILTERS, STATUS, USER_FILTER, USER_FILTER_ARRAY } from 'src/app/core/constants/app.constant';
 /**
  * model imports
  */
@@ -28,7 +28,7 @@ export class DashboardComponent implements OnInit {
    * selected Filter
    * intial value to be ALL
    */
-  public selectedFilter = FILTERS.ALL;
+  public selectedFilter = USER_FILTER.ACTIVE;
 
   /**
    * constants for status types
@@ -38,7 +38,7 @@ export class DashboardComponent implements OnInit {
   /**
    * filter parameters
    */
-  public filters = FILTER_ARRAY;
+  public filters = USER_FILTER_ARRAY;
 
   /**
    * listing data for all the todo items
@@ -56,14 +56,14 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.fetchUserData('');
+    this.fetchUserData(this.selectedFilter);
   }
 
   /**
    * fetch todo data according to the selected filter
    */
-  private fetchUserData(selectedFilter: string): void {
-    this.apiService.getUserListingData().subscribe(data => {
+  private fetchUserData(selectedFilter:{key : string, delete :boolean}): void {
+    this.apiService.getUserListingData(1,20,selectedFilter.delete).subscribe(data => {
       this.listingData = data.data;
     });
   }
@@ -107,19 +107,19 @@ export class DashboardComponent implements OnInit {
    * update filters and fetch the todo data accordingly
    * @param updatedFilter 
    */
-  public updateFilters(updatedFilter: string): void {
+  public updateFilters(updatedFilter:{key : string, delete :boolean}): void {
     this.selectedFilter = updatedFilter;
-    this.fetchUserData(this.selectedFilter == FILTERS.ALL ?  '' : this.selectedFilter);
+    this.fetchUserData(this.selectedFilter);
   }
 
   /**
    * delete the todo item
    */
-  public deleteTodo(todo: userItems): void {
-    this.apiService.deleteTodosData(todo.id as number).subscribe(data => {
+  public deleteUser(user: userItems): void {
+    this.apiService.deleteUserData(user.id as number).subscribe(data => {
       if (data){
         this.listingData = this.listingData.filter((data) => {
-          return data != todo
+          return data != user
         })
         this.helper.showNudge(data.message);
       }

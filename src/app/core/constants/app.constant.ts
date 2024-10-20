@@ -1,6 +1,6 @@
 export const LOCAL_STORAGE = {
     AUTH_TOKEN: 'authToken',
-    USER_INFO : 'userInfo'
+    USER_INFO: 'userInfo'
 }
 
 export const STATUS = {
@@ -21,6 +21,14 @@ export const FILTER_ARRAY = [
 ]
 
 export const USER = {
-    ADMIN : "ADMIN",
-    CLEINT : "CLIENT"
+    ADMIN: "ADMIN",
+    CLEINT: "CLIENT"
 }
+export const USER_FILTER = {
+    ACTIVE: { key: 'Active', delete: false },
+    IN_ACTIVE: { key: 'InActive', delete: true }
+}
+export const USER_FILTER_ARRAY = [
+    USER_FILTER.ACTIVE,
+    USER_FILTER.IN_ACTIVE
+]

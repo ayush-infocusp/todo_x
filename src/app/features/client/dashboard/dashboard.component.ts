@@ -1,7 +1,10 @@
 /**
  * angular imports
  */
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { API_URLS } from 'src/app/core/constants/api.constant';
 /**
  * constant imports
  */
@@ -53,6 +56,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private helper: HelperService,
+    private http: HttpClient,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
@@ -66,6 +71,14 @@ export class DashboardComponent implements OnInit {
     this.apiService.getTodoListingData(selectedFilter).subscribe(data => {
       this.listingData = data.data;
     });
+  }
+
+  public addData() {
+    if (this.selectedFile) {
+      this.uploadFile();
+    } else {
+      this.addTodo();
+    }
   }
 
   /**
@@ -90,9 +103,9 @@ export class DashboardComponent implements OnInit {
    * @param index 
    */
   public updateTodoStatus(todo: todoItems, index: number): void {
-    if(todo.status == this.statusConst.PENDING){
+    if (todo.status == this.statusConst.PENDING) {
       todo.status = this.statusConst.COMPLETED
-    }else{
+    } else {
       todo.status = this.statusConst.PENDING
     }
     this.apiService.updateTodosData(todo).subscribe(data => {
@@ -109,7 +122,7 @@ export class DashboardComponent implements OnInit {
    */
   public updateFilters(updatedFilter: string): void {
     this.selectedFilter = updatedFilter;
-    this.fetchTodoData(this.selectedFilter == FILTERS.ALL ?  '' : this.selectedFilter);
+    this.fetchTodoData(this.selectedFilter == FILTERS.ALL ? '' : this.selectedFilter);
   }
 
   /**
@@ -117,7 +130,7 @@ export class DashboardComponent implements OnInit {
    */
   public deleteTodo(todo: todoItems): void {
     this.apiService.deleteTodosData(todo.id as number).subscribe(data => {
-      if (data){
+      if (data) {
         this.listingData = this.listingData.filter((data) => {
           return data != todo
         })
@@ -125,5 +138,58 @@ export class DashboardComponent implements OnInit {
       }
     })
   }
+
+
+  public selectedFile !: File
+  public selectedFileBlobUrl !: any
+  public onSelectFile(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.selectedFileBlobUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
+    }
+  }
+
+  // public CHUNK_SIZE = 1024 * 1024 * 30;
+  public uploadFile() {
+    //   if (this.selectedFile.size > this.CHUNK_SIZE) {
+    //     this.uploadFileMultiPart()
+    //   } else {
+    console.log(this.selectedFile);
+
+    this.uploadFileSinglePart();
+    //   }
+  }
+
+  public uploadFileMultiPart() {
+
+  }
+
+  public async uploadFileSinglePart(): Promise<void> {
+    const formData = new FormData();
+    formData.append("file_chunk", this.selectedFile, this.selectedFile.name);
+    formData.append('file_id', this.selectedFile.name);
+    formData.append('is_last_chunk', 'true');
+    formData.append('is_multipart', 'false');
+
+    console.log("hello",formData.get("file_chunk"))
+    try {
+      await this.http.put(API_URLS.UPLOAD_FILE, formData, {
+        reportProgress: true,
+        observe: 'response'
+      }).subscribe(response => {
+        console.log('File uploaded successfully:', response);
+      },
+        error => {
+          console.error('Error uploading file:', error);
+        });
+      // console.log(`Chunk ${chunkIndex} uploaded successfully.`);
+    } catch (error) {
+      // console.error(`Error uploading chunk ${chunkIndex}:`, error);
+    }
+
+  }
+
+
 
 }

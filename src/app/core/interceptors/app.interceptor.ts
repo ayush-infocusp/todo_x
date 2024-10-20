@@ -19,11 +19,12 @@ export class AppInterceptor implements HttpInterceptor {
     const baseRequest = request.clone({ 
       url : environment.BASE_URL+request.url,
       setHeaders : {
-        'Content-Type': 'application/json; charset=utf-8',
+        // 'Content-Type': 'multipart/form-data;',
+        // 'Content-Type': 'application/json; charset=utf-8',
         'Authorization': `Bearer ${localStorage.getItem(LOCAL_STORAGE.AUTH_TOKEN)}`,
       }
     });
-    console.log(baseRequest.url);
+    console.log(baseRequest);
     
     return next.handle(baseRequest);
   }

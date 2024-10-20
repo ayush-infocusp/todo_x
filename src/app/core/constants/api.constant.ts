@@ -8,5 +8,9 @@ export const API_URLS = {
     SIGNUP : 'signup',
 
 
-    GET_USERS : 'admin/getUsers'
+    GET_USERS : 'admin/getUsers',
+    DELTE_USER : 'admin/deleteUsers',
+
+
+    UPLOAD_FILE : 'app/fileUpload'
 }
