@@ -6,7 +6,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ClientComponent } from './client.component';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from 'src/app/core/services/api.service';
-
+import { DialogModule } from 'primeng/dialog';
 
 @NgModule({
   declarations: [
@@ -17,6 +17,7 @@ import { ApiService } from 'src/app/core/services/api.service';
     FormsModule,
     CommonModule,
     ClientRoutingModule,
+    DialogModule
   ],
   providers : [
     ApiService

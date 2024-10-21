@@ -32,3 +32,10 @@ export const USER_FILTER_ARRAY = [
     USER_FILTER.ACTIVE,
     USER_FILTER.IN_ACTIVE
 ]
+
+
+export const FILE_TYPE = {
+    AUDIO : 'AUDIO',
+    VIDEO : 'VIDEO',
+    TEXT : 'TEXT'
+}

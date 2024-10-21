@@ -3,6 +3,7 @@ export interface todoItems {
     task: string,
     status: string,
     userId?: string,
+    type ?:string
 }
 
 

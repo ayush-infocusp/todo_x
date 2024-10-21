@@ -8,14 +8,17 @@ import { API_URLS } from 'src/app/core/constants/api.constant';
 /**
  * constant imports
  */
-import { FILTER_ARRAY, FILTERS, STATUS } from 'src/app/core/constants/app.constant';
+import { FILE_TYPE, FILTER_ARRAY, FILTERS, STATUS } from 'src/app/core/constants/app.constant';
 /**
  * model imports
  */
 import { todoItems } from 'src/app/core/models/app.model';
 import { ApiService } from 'src/app/core/services/api.service';
 import { HelperService } from 'src/app/core/services/helper.service';
+import { environment } from 'src/environments/environment';
 
+
+const CHUNK_SIZE = 1024 * 1024 * 3;
 /**
  * dashboard acts as the first interface to the client 
  * to render the todo-items and to save the todo individually 
@@ -37,6 +40,10 @@ export class DashboardComponent implements OnInit {
    * constants for status types
    */
   public statusConst = STATUS;
+  /**
+   * 
+   */
+  public filetypeConst = FILE_TYPE;
 
   /**
    * filter parameters
@@ -52,6 +59,26 @@ export class DashboardComponent implements OnInit {
    * todo Item to be added 
    */
   public newTodoItem: todoItems = { task: '', status: this.statusConst.PENDING };
+
+  /**
+   * 
+   */
+  public selectedFile !: File | null
+  /**
+   * 
+   */
+  public selectedFileBlobUrl !: any
+  /**
+   * 
+   */
+  public fileType !: string | null;
+
+
+  public showModal = false;
+
+  public displayFileData !:any
+
+  public envBaseUrl = environment.BASE_URL + 'upload_data/'
 
   constructor(
     private apiService: ApiService,
@@ -139,41 +166,61 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-
-  public selectedFile !: File
-  public selectedFileBlobUrl !: any
   public onSelectFile(event: any) {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
       this.selectedFileBlobUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
+      console.log(this.selectedFile);
+
+      if (this.selectedFile)
+        this.fileType = this.helper.getFileType(this.selectedFile);
     }
   }
 
-  // public CHUNK_SIZE = 1024 * 1024 * 30;
   public uploadFile() {
-    //   if (this.selectedFile.size > this.CHUNK_SIZE) {
-    //     this.uploadFileMultiPart()
-    //   } else {
-    console.log(this.selectedFile);
+    if (this.selectedFile && this.selectedFile.size > CHUNK_SIZE) {
+      this.uploadFileMultiPart()
+    } else {
+      this.uploadFileSinglePart();
+    }
 
-    this.uploadFileSinglePart();
-    //   }
   }
 
-  public uploadFileMultiPart() {
+  public async uploadFileMultiPart() {
+    if (this.selectedFile) {
+      const totalChunks = Math.ceil(this.selectedFile.size / CHUNK_SIZE);
+      const fileId = Date.now().toString();
+      for (let i = 0; i < totalChunks; i++) {
+        const chunk = this.selectedFile.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+        const isLastChunk = (i === totalChunks - 1);
+        await this.uploadChunk(chunk, fileId, isLastChunk);
+      }
+      this.helper.showNudge("file uploaded");
+      this.cancelFileUpload();
+    }
+  }
 
+  async uploadChunk(chunk: any, fileId: string, isLastChunck: boolean, isMultipart: boolean = true) {
+    if (this.selectedFile) {
+      const formData = new FormData();
+      formData.append("file_chunk", chunk, this.selectedFile?.name);
+      formData.append('file_id', fileId);
+      formData.append('is_last_chunk', isLastChunck.toString());
+      formData.append('is_multipart', 'true');
+      formData.append('file_type', this.helper.getFileType(this.selectedFile))
+      await this.http.put(API_URLS.UPLOAD_FILE, formData, { reportProgress: true, observe: 'response' }).toPromise();
+    }
   }
 
   public async uploadFileSinglePart(): Promise<void> {
-    const formData = new FormData();
-    formData.append("file_chunk", this.selectedFile, this.selectedFile.name);
-    formData.append('file_id', this.selectedFile.name);
-    formData.append('is_last_chunk', 'true');
-    formData.append('is_multipart', 'false');
-
-    console.log("hello",formData.get("file_chunk"))
-    try {
+    if (this.selectedFile) {
+      const formData = new FormData();
+      formData.append("file_chunk", this.selectedFile, this.selectedFile?.name);
+      formData.append('file_id', this.selectedFile.name);
+      formData.append('is_last_chunk', 'true');
+      formData.append('is_multipart', 'false');
+      formData.append('file_type', this.helper.getFileType(this.selectedFile))
       await this.http.put(API_URLS.UPLOAD_FILE, formData, {
         reportProgress: true,
         observe: 'response'
@@ -183,13 +230,23 @@ export class DashboardComponent implements OnInit {
         error => {
           console.error('Error uploading file:', error);
         });
-      // console.log(`Chunk ${chunkIndex} uploaded successfully.`);
-    } catch (error) {
-      // console.error(`Error uploading chunk ${chunkIndex}:`, error);
     }
+  }
 
+  public cancelFileUpload() {
+    this.selectedFile = null;
+    this.selectedFileBlobUrl = null
+    this.fileType = null
   }
 
 
-
+  public showFile(fileData : any){
+    this.showModal =  !this.showModal;
+    this.displayFileData = fileData
+    // const file =  "upload_data/"
+    // this.http.get(file+fileData.task).subscribe(data => {
+    //   this.selectedFileBlobUrl  = data;
+    // })
+    // this.selectedFileBlobUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
+  }
 }
