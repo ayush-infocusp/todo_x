@@ -6,16 +6,16 @@
         </div>
     </div>
     <div class="my-2" style="max-height:80vh;overflow-y:auto">
-        <div *ngFor="let listItem of listingData;let i=index" class=" d-flex border border-1 rounded-2 p-2 my-2">
+        <div *ngFor="let listItem of listingData;let i=index" class=" d-flex border border-1 rounded-2 p-2 my-2 align-items-center">
             <span class="me-2">
                 <input type="checkbox" [checked]="listItem.status != this.statusConst.PENDING" (click)="updateTodoStatus(listItem,i)">
             </span>
             <span class="d-flex w-100 justify-content-between">
                 <ng-container *ngIf="listItem.status != this.statusConst.PENDING" ><s>{{listItem.task}}</s></ng-container>
                 <ng-container *ngIf="listItem.status == this.statusConst.PENDING" >
-                    {{listItem.task}}
+                    <span class="my-auto">{{listItem.task}}</span>
                     <ng-container *ngIf="listItem.type == filetypeConst.AUDIO || listItem.type == filetypeConst.VIDEO">
-                        <button type="button" class="btn btn-sm btn-dark text-endmx-2" data-toggle="modal" data-target="#fileVisModal" (click)="showFile(listItem)">Visualise</button>
+                        <button type="button" class="btn btn-sm btn-dark rounded-4 text-end mx-2" data-toggle="modal" data-target="#fileVisModal" (click)="showFile(listItem)">View</button>
                     </ng-container>
                 </ng-container>
             </span>
@@ -50,7 +50,7 @@
 </div>
 
 
-<p-dialog header="File Viz" [modal]="true" [(visible)]="showModal" [style]="{ width: '25rem' }">
+<p-dialog header="File Viz" [modal]="showModal" [(visible)]="showModal" [style]="{ width: '25rem' }">
     <div>
         <ng-container *ngIf="displayFileData?.type == filetypeConst.VIDEO">
             <video controls class="form-control border-0 rounded-2 me-2 w-100" [src]="envBaseUrl+displayFileData.task"></video>
@@ -63,6 +63,6 @@
         </ng-container>
     </div>
     <div class="d-flex justify-content-end gap-2">
-        <button class="btn btn-primary" (onClick)="showModal = false;displayFileData = null" >Close</button>
+        <button class="btn btn-primary" (click)="showModal = false" >Close</button>
     </div>
 </p-dialog>

@@ -78,7 +78,7 @@ export class DashboardComponent implements OnInit {
 
   public displayFileData !:any
 
-  public envBaseUrl = environment.BASE_URL + 'upload_data/'
+  public envBaseUrl = environment.BASE_URL + 'send_file/'
 
   constructor(
     private apiService: ApiService,
@@ -178,13 +178,13 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  public uploadFile() {
+  public async uploadFile() {
     if (this.selectedFile && this.selectedFile.size > CHUNK_SIZE) {
-      this.uploadFileMultiPart()
+      await this.uploadFileMultiPart()
     } else {
-      this.uploadFileSinglePart();
+      await this.uploadFileSinglePart();
     }
-
+    this.fetchTodoData('');
   }
 
   public async uploadFileMultiPart() {
