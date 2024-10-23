@@ -53,11 +53,10 @@
 <p-dialog header="File Viz" [modal]="showModal" [(visible)]="showModal" [style]="{ width: '25rem' }">
     <div>
         <ng-container *ngIf="displayFileData?.type == filetypeConst.VIDEO">
-            <video controls class="form-control border-0 rounded-2 me-2 w-100" [src]="envBaseUrl+displayFileData.task"></video>
+            <video controls class="form-control border-0 rounded-2 me-2 w-100" async [src]="fileData"></video>
         </ng-container>
         <ng-container *ngIf="displayFileData?.type == filetypeConst.AUDIO">
-                <audio controls>
-                    <source [src]="envBaseUrl+displayFileData.task" type="audio/mpeg">
+                <audio controls async [src]="fileData" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>
         </ng-container>

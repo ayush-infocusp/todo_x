@@ -4,6 +4,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { retry } from 'rxjs';
 import { API_URLS } from 'src/app/core/constants/api.constant';
 /**
  * constant imports
@@ -78,7 +79,7 @@ export class DashboardComponent implements OnInit {
 
   public displayFileData !:any
 
-  public envBaseUrl = environment.BASE_URL + 'send_file/'
+  public envBaseUrl = 'send_file/'
 
   constructor(
     private apiService: ApiService,
@@ -171,8 +172,6 @@ export class DashboardComponent implements OnInit {
     if (file) {
       this.selectedFile = file;
       this.selectedFileBlobUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
-      console.log(this.selectedFile);
-
       if (this.selectedFile)
         this.fileType = this.helper.getFileType(this.selectedFile);
     }
@@ -209,7 +208,7 @@ export class DashboardComponent implements OnInit {
       formData.append('is_last_chunk', isLastChunck.toString());
       formData.append('is_multipart', 'true');
       formData.append('file_type', this.helper.getFileType(this.selectedFile))
-      await this.http.put(API_URLS.UPLOAD_FILE, formData, { reportProgress: true, observe: 'response' }).toPromise();
+      await this.http.put(API_URLS.UPLOAD_FILE, formData, { reportProgress: true, observe: 'response' }).pipe(retry(1)).toPromise();
     }
   }
 
@@ -239,14 +238,23 @@ export class DashboardComponent implements OnInit {
     this.fileType = null
   }
 
-
+  public fileData !:any;
   public showFile(fileData : any){
     this.showModal =  !this.showModal;
     this.displayFileData = fileData
-    // const file =  "upload_data/"
-    // this.http.get(file+fileData.task).subscribe(data => {
-    //   this.selectedFileBlobUrl  = data;
-    // })
-    // this.selectedFileBlobUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
+    this.getSrc(this.envBaseUrl+this.displayFileData.task)
+    this.fileData = URL.createObjectURL(this.fileData)
+  }
+
+
+  async getSrc(url : string){
+    await this.http.get(url,{responseType  : 'blob'}).subscribe(data => {
+      if(data) {
+        console.log(data,data.type);
+        console.log('Instance of Blob:', data instanceof Blob);
+
+        this.fileData = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data ))
+      }
+    })
   }
 }
