@@ -39,3 +39,8 @@ export const FILE_TYPE = {
     VIDEO : 'VIDEO',
     TEXT : 'TEXT'
 }
+
+export const RECORDING_TYPE = {
+    AUDIO : 'AUDIO',
+    VIDEO : 'VIDEO'
+}

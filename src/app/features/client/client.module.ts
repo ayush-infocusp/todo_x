@@ -17,7 +17,7 @@ import { DialogModule } from 'primeng/dialog';
     FormsModule,
     CommonModule,
     ClientRoutingModule,
-    DialogModule
+    DialogModule,
   ],
   providers : [
     ApiService

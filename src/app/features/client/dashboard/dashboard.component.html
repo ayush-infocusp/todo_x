@@ -23,7 +23,8 @@
         </div>
     </div>
     <div class="form-control border-2 my-2 d-flex justify-content-between">
-        <div *ngIf="selectedFile && selectedFileBlobUrl;else todoTextInput" >
+        <!-- data to be shown on file selection from local -->
+        <div *ngIf="selectedFile && selectedFileBlobUrl;else audioVideoRecording" >
             <p>{{selectedFile.name}}</p>
             <video *ngIf="fileType == filetypeConst.VIDEO;else audioVisualizer" controls class="form-control border-0 rounded-2 me-2 w-100" [src]="selectedFileBlobUrl"></video>
             <ng-template #audioVisualizer>
@@ -33,15 +34,49 @@
                 </audio>
             </ng-template>
         </div>
+        <!--audio or video on recording  -->
+        <ng-template #audioVideoRecording>
+            <ng-container *ngIf="isVideoRecording || videoBlobUrl || isAudioRecording || blobUrl || true;else todoTextInput">
+                <div class="my-auto w-100 d-flex justify-content-between" >
+                    <!-- video recording -->
+                    <video #videoRecorder *ngIf="isVideoRecording || videoBlobUrl || false;else audioVisualizer">
+                        <source *ngIf="!isVideoRecording && videoBlobUrl" [src]="videoBlobUrl">
+                    </video>
+                    <!-- audio recording -->
+                    <ng-template #audioVisualizer>
+                        <audio *ngIf="!isAudioRecording && blobUrl"  controls>
+                            <source [src]="blobUrl" type="audio/webm">
+                        </audio>
+                    </ng-template>
+                    <span class="me-0 ms-auto my-auto mx-2" *ngIf="(!isAudioRecording && blobUrl) || (!isVideoRecording && videoBlobUrl)">
+                        <button type="button" class="btn-close px-2" aria-label="Close" (click)="clearRecordedData()"></button>
+                    </span>
+                </div>
+            </ng-container>
+        </ng-template>
+        <!--text input  -->
         <ng-template #todoTextInput>
             <input type="text" class="form-control border-0 me-2 w-100" [placeholder]="'Enter your task'" [(ngModel)]="newTodoItem.task">
         </ng-template>
         
+        <!-- buttons for interactivity -->
         <div class="d-flex text-end">
-            <label *ngIf="!selectedFile" class="pi pi-link cursor-pointer my-auto me-2" for="fileUploader">
+            <!-- video recording  -->
+            <span *ngIf="!isAudioRecording && !blobUrl" [ngClass]="!isVideoRecording && !videoBlobUrl ? 'bg-65de35 border' : 'bg-de7b35'" 
+                (click)="!isVideoRecording && !videoBlobUrl ? startVideoRecording() : stopVideoRecording()"
+                class="pi pi-camera mx-2 cursor-pointer my-auto p-1 rounded-circle"></span>
+
+            <!--audio recoding  -->
+            <span *ngIf="!isVideoRecording && !videoBlobUrl" [ngClass]="!isAudioRecording && !blobUrl ? 'bg-65de35 border' : 'bg-de7b35'" 
+                (click)="!isAudioRecording && !blobUrl ? startRecording(recordingTypeConst.AUDIO) : stopRecording()"
+                class=" pi pi-microphone cursor-pointer mx-2 my-auto p-1 rounded-circle"></span>
+
+            <!-- file uploader -->
+            <label *ngIf="!selectedFile && !isAudioRecording && !blobUrl && !isVideoRecording && !videoBlobUrl" class="pi pi-link cursor-pointer my-auto mx-2 px-1" for="fileUploader">
                 <input type="file" hidden id="fileUploader"  #fileUpload (change)="onSelectFile($event)">
             </label>
-            <button *ngIf="selectedFileBlobUrl" class="btn btn-dark radius-5 border" (click)="cancelFileUpload()">Cancel</button>
+            <!-- button -->
+            <button *ngIf="selectedFileBlobUrl" class="btn btn-dark radius-5 border mx-2" (click)="cancelFileUpload()">Cancel</button>
             <button class="btn btn-dark radius-5 border" (click)="addData()">
                 Add
             </button>
@@ -65,3 +100,29 @@
         <button class="btn btn-primary" (click)="showModal = false" >Close</button>
     </div>
 </p-dialog>
+
+
+
+
+
+
+
+<!-- <div>
+    <div>Video</div>
+    <div>
+      <button class="start-button" *ngIf="!isVideoRecording && !videoBlobUrl" (click)="startVideoRecording()">Start Video Recording</button>
+      <button class="stop-button" *ngIf="isVideoRecording && !videoBlobUrl" (click)="stopVideoRecording()">Stop Video Recording</button>
+      <div id="videoTimer" *ngIf="isVideoRecording && !videoBlobUrl"> {{ videoRecordedTime }} </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="text-center">
+        <h3>
+          <video #videoRecorder>
+            <source *ngIf="!isVideoRecording && videoBlobUrl" [src]="videoBlobUrl">
+          </video>
+        </h3>
+      </div>
+    </div>
+</div> -->
