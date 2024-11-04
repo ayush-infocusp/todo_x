@@ -36,14 +36,14 @@
         </div>
         <!--audio or video on recording  -->
         <ng-template #audioVideoRecording>
-            <ng-container *ngIf="isVideoRecording || videoBlobUrl || isAudioRecording || blobUrl || true;else todoTextInput">
+            <ng-container *ngIf="isVideoRecording || videoBlobUrl || isAudioRecording || blobUrl ;else todoTextInput">
                 <div class="my-auto w-100 d-flex justify-content-between" >
                     <!-- video recording -->
-                    <video #videoRecorder *ngIf="isVideoRecording || videoBlobUrl || false;else audioVisualizer">
+                    <video #videoRecorder *ngIf="isVideoRecording || videoBlobUrl ;else audioVisualizerRec">
                         <source *ngIf="!isVideoRecording && videoBlobUrl" [src]="videoBlobUrl">
                     </video>
                     <!-- audio recording -->
-                    <ng-template #audioVisualizer>
+                    <ng-template #audioVisualizerRec>
                         <audio *ngIf="!isAudioRecording && blobUrl"  controls>
                             <source [src]="blobUrl" type="audio/webm">
                         </audio>

@@ -94,7 +94,7 @@ export class DashboardComponent implements OnInit {
   /**
    * 
    */
-  public envBaseUrl = 'send_file/'
+  public envBaseUrl = 'send_file'
 
   /**
    * bool for the type of recording
@@ -115,6 +115,7 @@ export class DashboardComponent implements OnInit {
   videoName!: any;
   videoRecordedTime!: any
 
+  public fileData !: any;
 
   constructor(
     private apiService: ApiService,
@@ -154,8 +155,8 @@ export class DashboardComponent implements OnInit {
     this.videoRecordingService.getRecordedBlob().subscribe((data) => {
       this.videoBlob = data.blob;
       this.videoName = data.name;
-      this.selectedFile = new File([data.blob],this.helper.getRandomFileName("record_")+".wav",{
-        type : "video/wav"
+      this.selectedFile = new File([data.blob], this.helper.getRandomFileName("record_") + ".mp4", {
+        type: "video/mp4"
       })
       this.videoBlobUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data.blob));
       this.ref.detectChanges();
@@ -173,11 +174,11 @@ export class DashboardComponent implements OnInit {
     });
 
     this.audioRecordingService.getRecordedBlob().subscribe((data) => {
-      this.selectedFile = new File([data.blob],this.helper.getRandomFileName("record_")+".mp3",{
-        type : "audio/mp3"
+      this.selectedFile = new File([data.blob], this.helper.getRandomFileName("record_") + ".mp3", {
+        type: "audio/mp3"
       })
       console.log(this.selectedFile);
-      
+
       this.blobUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data.blob));
       this.isAudioRecording = false;
     });
@@ -344,22 +345,26 @@ export class DashboardComponent implements OnInit {
     this.fileType = null
   }
 
-  public fileData !: any;
-  public showFile(fileData: any) {
+  public async showFile(fileData: any) {
     this.showModal = !this.showModal;
     this.displayFileData = fileData
-    this.getSrc(this.envBaseUrl + this.displayFileData.task)
-    this.fileData = URL.createObjectURL(this.fileData)
+    const filename = this.displayFileData.task
+    await this.getSrc(filename ?? this.displayFileData.task)
+    // this.fileData = URL.createObjectURL(this.fileData)
   }
 
 
   async getSrc(url: string) {
-    await this.http.get(url, { responseType: 'blob' }).subscribe(data => {
-      if (data) {
-        console.log(data, data.type);
-        console.log('Instance of Blob:', data instanceof Blob);
-
-        this.fileData = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data))
+    await this.http.post(this.envBaseUrl, { data: url, }, {
+      responseType: 'blob' as 'json'
+    }).subscribe({
+      next: (data) => {
+        if (data) {
+          this.fileData = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data as Blob))
+        }
+      },
+      error: (err) => {
+        console.log("Error", err)
       }
     })
   }
