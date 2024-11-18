@@ -25,7 +25,7 @@ import { VideoRecordingService } from 'src/app/core/services/video-recording-ser
 
 
 
-const CHUNK_SIZE = 1024 * 1024 * 5;
+const CHUNK_SIZE = 1024 * 1024 * 50;
 /**
  * dashboard acts as the first interface to the client 
  * to render the todo-items and to save the todo individually 
@@ -295,21 +295,22 @@ export class DashboardComponent implements OnInit {
       for (let i = 0; i < totalChunks; i++) {
         const chunk = this.selectedFile.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
         const isLastChunk = (i === totalChunks - 1);
-        await this.uploadChunk(chunk, fileId, isLastChunk);
+        await this.uploadChunk(chunk, fileId, isLastChunk, totalChunks);
       }
       this.helper.showNudge("file uploaded");
       this.cancelFileUpload();
     }
   }
 
-  async uploadChunk(chunk: any, fileId: string, isLastChunck: boolean, isMultipart: boolean = true) {
+  async uploadChunk(chunk: any, fileId: string, isLastChunck: boolean, totalChunks : number) {
     if (this.selectedFile) {
       const formData = new FormData();
       formData.append("file_chunk", chunk, this.selectedFile?.name);
       formData.append('file_id', fileId);
       formData.append('is_last_chunk', isLastChunck.toString());
       formData.append('is_multipart', 'true');
-      formData.append('file_type', this.helper.getFileType(this.selectedFile))
+      formData.append('file_type', this.helper.getFileType(this.selectedFile));
+      formData.append('total_chunks', totalChunks.toString());
       await this.http.put(API_URLS.UPLOAD_FILE, formData, { reportProgress: true, observe: 'response' }).pipe(retry(1)).subscribe(data => {
         if (data && isLastChunck) {
           this.fetchTodoData('');
